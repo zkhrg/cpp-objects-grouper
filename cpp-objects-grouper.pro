@@ -9,14 +9,21 @@ CONFIG += c++17
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    baseparser.cc \
+    basestore.cc \
+    controller.cc \
     main.cpp \
-    mainwindow.cpp
+    objectsparser.cc \
+    sqlitestore.cc
 
 HEADERS += \
-    mainwindow.h
+    baseparser.h \
+    basestore.h \
+    controller.h \
+    objectsparser.h \
+    sqlitestore.h
 
-FORMS += \
-    mainwindow.ui
+FORMS +=
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
