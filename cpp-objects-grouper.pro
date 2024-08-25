@@ -13,6 +13,7 @@ SOURCES += \
     basestore.cc \
     controller.cc \
     main.cpp \
+    mywindow.cc \
     objectsparser.cc \
     sqlitestore.cc
 
@@ -20,6 +21,7 @@ HEADERS += \
     baseparser.h \
     basestore.h \
     controller.h \
+    mywindow.h \
     objectsparser.h \
     sqlitestore.h
 
