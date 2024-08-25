@@ -2,6 +2,7 @@
 #define MYWINDOW_H
 
 #include <QCheckBox>
+#include <QComboBox>
 #include <QGroupBox>
 #include <QHBoxLayout>
 #include <QLabel>
@@ -16,8 +17,18 @@ class MyWindow : public QWidget {
  public:
   explicit MyWindow(QWidget *parent = nullptr);
   void InitWidgets();
+  void InitGroupingComponent();
 
  signals:
+ private:
+  // groupingComponent
+  QGroupBox *groupingBox;
+  groupingBoxLayout;
+  mainGroupingBoxLayout;
+  groupingSizeWidget;
+  btnGroupBySize;
+  spbGroupBySize;
+  groupByComboBox;
 };
 
 #endif  // MYWINDOW_H

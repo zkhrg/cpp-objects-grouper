@@ -1,35 +1,78 @@
 #include "mywindow.h"
 
-MyWindow::MyWindow(QWidget *parent) : QWidget(parent) { InitWidgets(); }
+MyWindow::MyWindow(QWidget *parent) : QWidget(parent) { InitComponents(); }
 
 // группы
 // если больше 2 в группе то выделяем отдельную группу, если нет то суем в
 // разное
 
-void MyWindow::InitWidgets() {
+void MyWindow::InitComponents() {
   QWidget *leftWidget = new QWidget(this);
   QVBoxLayout *leftLayout = new QVBoxLayout(leftWidget);
 
-  QGroupBox *groupingBox = new QGroupBox("Group by size", this);
-  QGroupBox *filteringBox = new QGroupBox("Filters", this);
-  QGroupBox *sortingBox = new QGroupBox("Sort", this);
-  QHBoxLayout *groupingBoxLayout = new QHBoxLayout(groupingBox);
-  QHBoxLayout *filteringBoxLayout = new QHBoxLayout(filteringBox);
-  QHBoxLayout *sortingBoxLayout = new QHBoxLayout(sortingBox);
+  leftLayout->addWidget(filteringBox);
+
+  // Создаем основной виджет для правой области
+  QWidget *rightWidget = new QWidget(this);
+  QVBoxLayout *rightLayout = new QVBoxLayout(rightWidget);
+  for (int i = 0; i < 20; ++i) {
+    QLabel *label = new QLabel(
+        QString("Name\nDistance\nType\nTime\n %1").arg(i), rightWidget);
+
+    rightLayout->addWidget(label);
+  }
+
+  // Создаем QScrollArea для левой области
+  QScrollArea *leftScrollArea = new QScrollArea(this);
+  leftScrollArea->setWidget(leftWidget);
+  leftScrollArea->setWidgetResizable(true);
+
+  // Создаем QScrollArea для правой области
+  QScrollArea *rightScrollArea = new QScrollArea(this);
+  rightScrollArea->setWidget(rightWidget);
+  rightScrollArea->setWidgetResizable(true);
+
+  // Создаем основной виджет приложения и добавляем в него QHBoxLayout
+  QHBoxLayout *windowLayout = new QHBoxLayout(this);
+
+  // Добавляем оба QScrollArea в основной виджет
+  windowLayout->addWidget(leftScrollArea);
+  windowLayout->addWidget(rightScrollArea);
+
+  this->setLayout(windowLayout);
+  this->setWindowTitle("C++ OBJECTS GROUPING");
+  this->resize(800, 600);
+}
+
+void MyWindow::InitGroupingComponent() {
+  QGroupBox *groupingBox = new QGroupBox("grouping", this);
+  QGroupBox *filteringBox = new QGroupBox("filtering", this);
+  QHBoxLayout *groupingBoxLayout = new QHBoxLayout();
+  QVBoxLayout *mainGroupingBoxLayout = new QVBoxLayout();
+  QVBoxLayout *filteringBoxLayout = new QVBoxLayout(filteringBox);
 
   // Types
   // Names
   // Distance
   // Date
 
-  groupingBox->setLayout(groupingBoxLayout);
+  groupingBox->setLayout(mainGroupingBoxLayout);
   filteringBox->setLayout(filteringBoxLayout);
-  sortingBox->setLayout(sortingBoxLayout);
 
-  QPushButton *btnGroupBySize = new QPushButton("group by size!", groupingBox);
+  QWidget *groupingSizeWidget = new QWidget(groupingBox);
+  groupingSizeWidget->setLayout(groupingBoxLayout);
+  QPushButton *btnGroupBySize =
+      new QPushButton("make type groups by size!", groupingBox);
   QSpinBox *spbGroupBySize = new QSpinBox(groupingBox);
   groupingBoxLayout->addWidget(btnGroupBySize);
   groupingBoxLayout->addWidget(spbGroupBySize);
+
+  QComboBox *groupByComboBox = new QComboBox();
+  mainGroupingBoxLayout->addWidget(groupingSizeWidget);
+  mainGroupingBoxLayout->addWidget(groupByComboBox);
+
+  QPushButton *btnResetFilters = new QPushButton("reset filters", leftWidget);
+  filteringBoxLayout->addWidget(btnResetFilters);
 
   QGroupBox *typesGB = new QGroupBox("types", filteringBox);
   QVBoxLayout *typesCheckboxesLayout = new QVBoxLayout(typesGB);
@@ -75,37 +118,4 @@ void MyWindow::InitWidgets() {
   //
 
   leftLayout->addWidget(groupingBox);
-  leftLayout->addWidget(filteringBox);
-  leftLayout->addWidget(sortingBox);
-
-  // Создаем основной виджет для правой области
-  QWidget *rightWidget = new QWidget(this);
-  QVBoxLayout *rightLayout = new QVBoxLayout(rightWidget);
-  for (int i = 0; i < 20; ++i) {
-    QPushButton *button =
-        new QPushButton(QString("Right Button %1").arg(i), rightWidget);
-
-    rightLayout->addWidget(button);
-  }
-
-  // Создаем QScrollArea для левой области
-  QScrollArea *leftScrollArea = new QScrollArea(this);
-  leftScrollArea->setWidget(leftWidget);
-  leftScrollArea->setWidgetResizable(true);
-
-  // Создаем QScrollArea для правой области
-  QScrollArea *rightScrollArea = new QScrollArea(this);
-  rightScrollArea->setWidget(rightWidget);
-  rightScrollArea->setWidgetResizable(true);
-
-  // Создаем основной виджет приложения и добавляем в него QHBoxLayout
-  QHBoxLayout *windowLayout = new QHBoxLayout(this);
-
-  // Добавляем оба QScrollArea в основной виджет
-  windowLayout->addWidget(leftScrollArea);
-  windowLayout->addWidget(rightScrollArea);
-
-  this->setLayout(windowLayout);
-  this->setWindowTitle("Two Scroll Areas Example");
-  this->resize(800, 600);
 }
