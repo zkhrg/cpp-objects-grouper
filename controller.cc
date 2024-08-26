@@ -1,3 +1,5 @@
 #include "controller.h"
 
-controller::controller() {}
+Controller::Controller() {}
+
+void Controller::SetStore(std::unique_ptr<Store> s) { store = std::move(s); }

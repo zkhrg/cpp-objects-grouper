@@ -1,4 +1,4 @@
-QT       += core gui
+QT       += core gui sql
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -10,7 +10,6 @@ CONFIG += c++17
 
 SOURCES += \
     baseparser.cc \
-    basestore.cc \
     controller.cc \
     main.cpp \
     mywindow.cc \
@@ -19,11 +18,12 @@ SOURCES += \
 
 HEADERS += \
     baseparser.h \
-    basestore.h \
     controller.h \
     mywindow.h \
     objectsparser.h \
-    sqlitestore.h
+    sqlitestore.h \
+    store.h \
+    types.h
 
 FORMS +=
 

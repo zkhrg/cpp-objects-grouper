@@ -7,75 +7,43 @@ MyWindow::MyWindow(QWidget *parent) : QWidget(parent) { InitComponents(); }
 // разное
 
 void MyWindow::InitComponents() {
-  QWidget *leftWidget = new QWidget(this);
-  QVBoxLayout *leftLayout = new QVBoxLayout(leftWidget);
-
-  leftLayout->addWidget(filteringBox);
-
-  // Создаем основной виджет для правой области
-  QWidget *rightWidget = new QWidget(this);
-  QVBoxLayout *rightLayout = new QVBoxLayout(rightWidget);
-  for (int i = 0; i < 20; ++i) {
-    QLabel *label = new QLabel(
-        QString("Name\nDistance\nType\nTime\n %1").arg(i), rightWidget);
-
-    rightLayout->addWidget(label);
-  }
-
-  // Создаем QScrollArea для левой области
-  QScrollArea *leftScrollArea = new QScrollArea(this);
-  leftScrollArea->setWidget(leftWidget);
-  leftScrollArea->setWidgetResizable(true);
-
-  // Создаем QScrollArea для правой области
-  QScrollArea *rightScrollArea = new QScrollArea(this);
-  rightScrollArea->setWidget(rightWidget);
-  rightScrollArea->setWidgetResizable(true);
-
-  // Создаем основной виджет приложения и добавляем в него QHBoxLayout
-  QHBoxLayout *windowLayout = new QHBoxLayout(this);
-
-  // Добавляем оба QScrollArea в основной виджет
-  windowLayout->addWidget(leftScrollArea);
-  windowLayout->addWidget(rightScrollArea);
-
-  this->setLayout(windowLayout);
-  this->setWindowTitle("C++ OBJECTS GROUPING");
-  this->resize(800, 600);
+  StartPage();
+  // InitMainComponent();
+  // InitGroupingComponent();
+  // InitFilteringComponent();
+  // InitItemsComponent();
 }
 
 void MyWindow::InitGroupingComponent() {
-  QGroupBox *groupingBox = new QGroupBox("grouping", this);
-  QGroupBox *filteringBox = new QGroupBox("filtering", this);
-  QHBoxLayout *groupingBoxLayout = new QHBoxLayout();
-  QVBoxLayout *mainGroupingBoxLayout = new QVBoxLayout();
-  QVBoxLayout *filteringBoxLayout = new QVBoxLayout(filteringBox);
-
-  // Types
-  // Names
-  // Distance
-  // Date
+  groupingBox = new QGroupBox("grouping", this);
+  groupingBoxLayout = new QHBoxLayout();
+  mainGroupingBoxLayout = new QVBoxLayout();
 
   groupingBox->setLayout(mainGroupingBoxLayout);
-  filteringBox->setLayout(filteringBoxLayout);
 
-  QWidget *groupingSizeWidget = new QWidget(groupingBox);
+  groupingSizeWidget = new QWidget(groupingBox);
   groupingSizeWidget->setLayout(groupingBoxLayout);
-  QPushButton *btnGroupBySize =
-      new QPushButton("make type groups by size!", groupingBox);
-  QSpinBox *spbGroupBySize = new QSpinBox(groupingBox);
+  btnGroupBySize = new QPushButton("make type groups by size!", groupingBox);
+  spbGroupBySize = new QSpinBox(groupingBox);
   groupingBoxLayout->addWidget(btnGroupBySize);
   groupingBoxLayout->addWidget(spbGroupBySize);
 
-  QComboBox *groupByComboBox = new QComboBox();
+  groupByComboBox = new QComboBox();
   mainGroupingBoxLayout->addWidget(groupingSizeWidget);
   mainGroupingBoxLayout->addWidget(groupByComboBox);
+  mainGroupingBoxLayout->addStretch();
 
-  QPushButton *btnResetFilters = new QPushButton("reset filters", leftWidget);
-  filteringBoxLayout->addWidget(btnResetFilters);
+  leftLayout->addWidget(groupingBox);
+}
 
-  QGroupBox *typesGB = new QGroupBox("types", filteringBox);
-  QVBoxLayout *typesCheckboxesLayout = new QVBoxLayout(typesGB);
+void MyWindow::InitFilteringComponent() {
+  filteringBox = new QGroupBox("Filters", this);
+  filteringBoxLayout = new QVBoxLayout(filteringBox);
+
+  filteringBox->setLayout(filteringBoxLayout);
+
+  typesGB = new QGroupBox("types", filteringBox);
+  typesCheckboxesLayout = new QVBoxLayout(typesGB);
   int mockTypesCount = 10;
   for (int i = 0; i < mockTypesCount; i++) {
     QCheckBox *cb = new QCheckBox("checky boxy", typesGB);
@@ -84,8 +52,8 @@ void MyWindow::InitGroupingComponent() {
   typesCheckboxesLayout->addStretch();
   filteringBoxLayout->addWidget(typesGB);
 
-  QGroupBox *namesGB = new QGroupBox("names", filteringBox);
-  QVBoxLayout *namesCheckboxesLayout = new QVBoxLayout(namesGB);
+  namesGB = new QGroupBox("names", filteringBox);
+  namesCheckboxesLayout = new QVBoxLayout(namesGB);
   int mockNamesCount = 30;
   for (int i = 0; i < mockNamesCount; i++) {
     QCheckBox *cb = new QCheckBox("name letter box", namesGB);
@@ -94,8 +62,8 @@ void MyWindow::InitGroupingComponent() {
   namesCheckboxesLayout->addStretch();
   filteringBoxLayout->addWidget(namesGB);
 
-  QGroupBox *distancesGB = new QGroupBox("distances", filteringBox);
-  QVBoxLayout *distancesCheckboxesLayout = new QVBoxLayout(distancesGB);
+  distancesGB = new QGroupBox("distances", filteringBox);
+  distancesCheckboxesLayout = new QVBoxLayout(distancesGB);
   int distancesCount = 30;
   for (int i = 0; i < distancesCount; i++) {
     QCheckBox *cb = new QCheckBox("distance box", distancesGB);
@@ -104,8 +72,8 @@ void MyWindow::InitGroupingComponent() {
   distancesCheckboxesLayout->addStretch();
   filteringBoxLayout->addWidget(distancesGB);
 
-  QGroupBox *datesGB = new QGroupBox("dates", filteringBox);
-  QVBoxLayout *datesCheckboxesLayout = new QVBoxLayout(datesGB);
+  datesGB = new QGroupBox("dates", filteringBox);
+  datesCheckboxesLayout = new QVBoxLayout(datesGB);
   int datesCount = 2;
   for (int i = 0; i < datesCount; i++) {
     QCheckBox *cb = new QCheckBox("dates box", datesGB);
@@ -113,9 +81,65 @@ void MyWindow::InitGroupingComponent() {
   }
   datesCheckboxesLayout->addStretch();
   filteringBoxLayout->addWidget(datesGB);
-  //
-  //
-  //
 
-  leftLayout->addWidget(groupingBox);
+  leftLayout->addWidget(filteringBox);
+}
+
+void MyWindow::InitMainComponent() {
+  leftWidget = new QWidget(this);
+  leftLayout = new QVBoxLayout(leftWidget);
+
+  rightWidget = new QWidget(this);
+  rightLayout = new QVBoxLayout(rightWidget);
+
+  leftScrollArea = new QScrollArea(this);
+  leftScrollArea->setWidget(leftWidget);
+  leftScrollArea->setWidgetResizable(true);
+
+  rightScrollArea = new QScrollArea(this);
+  rightScrollArea->setWidget(rightWidget);
+  rightScrollArea->setWidgetResizable(true);
+
+  windowLayout = new QHBoxLayout(this);
+  windowLayout->addWidget(leftScrollArea);
+  windowLayout->addWidget(rightScrollArea);
+
+  this->setLayout(windowLayout);
+  this->setWindowTitle("C++ OBJECTS GROUPING");
+  this->resize(800, 600);
+}
+
+void MyWindow::InitItemsComponent() {
+  for (int i = 0; i < 20; ++i) {
+    QLabel *label = new QLabel(
+        QString("Name\nDistance\nType\nTime\n %1").arg(i), rightWidget);
+
+    rightLayout->addWidget(label);
+  }
+}
+
+void MyWindow::StartPage() {
+  QGridLayout *startLayout = new QGridLayout();
+  QPushButton *btnSelectPath =
+      new QPushButton("select file with objects", this);
+  connect(btnSelectPath, &QPushButton::clicked, this,
+          &MyWindow::openDirectoryDialog);
+
+  btnSelectPath->setFixedHeight(50);
+  startLayout->addWidget(btnSelectPath, 0, 0);
+
+  this->setLayout(startLayout);
+  this->resize(360, 80);
+}
+
+void MyWindow::openDirectoryDialog() {
+  // Open a directory selection dialog
+  QString directory =
+      QFileDialog::getExistingDirectory(this, "Select Directory");
+
+  // Show the selected directory (for demonstration purposes)
+  if (!directory.isEmpty()) {
+    QMessageBox::information(this, "Selected Directory",
+                             "You selected: " + directory);
+  }
 }
