@@ -3,6 +3,10 @@
 * Технологии C++/Qt/Sqlite(grouping and storing)
 * Паттерны MVC/Отделение интерфейсами для инверсии зависимостей
 
+## Установка
+`qmake`
+`make`
+
 ## Представление
 * Ниже приведено стартовое окно, в котором нужно выбрать файл в нужном формате (я использова .csv с разделением пробелами)
 <br> <img width="472" alt="image" src="https://github.com/user-attachments/assets/32f6edee-76c3-4eba-8ae0-3ea456cd6f41">
