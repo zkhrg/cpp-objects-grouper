@@ -11,4 +11,10 @@ struct Object {
   double timeStamp;
 };
 
+struct ViewObject : public Object {
+  std::string groupName;
+};
+
+enum class eGrouping { Type, Name, Date, Distance };
+
 #endif  // TYPES_H

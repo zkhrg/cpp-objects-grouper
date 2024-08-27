@@ -12,6 +12,8 @@ class Model {
   void SetStore(std::unique_ptr<Store> s);
   void SetParser(std::unique_ptr<Parser> p);
   void Parse(std::string s);
+  std::vector<ViewObject> getObjects(eGrouping grouping, int pageSize,
+                                     int pageNumber);
 
  private:
   std::unique_ptr<Store> store_;

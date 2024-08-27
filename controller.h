@@ -10,6 +10,8 @@ class Controller {
   Controller();
   void setModel(std::unique_ptr<Model> m);
   void parseObjects(std::string s);
+  std::vector<ViewObject> getObjects(eGrouping grouping, int pageSize,
+                                     int pageNumber);
 
  private:
   std::unique_ptr<Model> model_;

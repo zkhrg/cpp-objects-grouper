@@ -1,6 +1,10 @@
 #include "mywindow.h"
 
-MyWindow::MyWindow(QWidget *parent) : QWidget(parent) { InitComponents(); }
+MyWindow::MyWindow(QWidget *parent) : QWidget(parent) {
+  InitComponents();
+  currentGroup = "";
+  page = 1;
+}
 
 // группы
 // если больше 2 в группе то выделяем отдельную группу, если нет то суем в
@@ -29,60 +33,15 @@ void MyWindow::InitGroupingComponent() {
   groupingBoxLayout->addWidget(spbGroupBySize);
 
   groupByComboBox = new QComboBox();
+  groupByComboBox->addItems(QStringList{"No grouping", "By type size",
+                                        "By name", "By date", "By distance"});
+  connect(groupByComboBox, QOverload<int>::of(&QComboBox::currentIndexChanged),
+          this, &MyWindow::onComboBoxIndexChanged);
   mainGroupingBoxLayout->addWidget(groupingSizeWidget);
   mainGroupingBoxLayout->addWidget(groupByComboBox);
   mainGroupingBoxLayout->addStretch();
 
   leftLayout->addWidget(groupingBox);
-}
-
-void MyWindow::InitFilteringComponent() {
-  filteringBox = new QGroupBox("Filters", this);
-  filteringBoxLayout = new QVBoxLayout(filteringBox);
-
-  filteringBox->setLayout(filteringBoxLayout);
-
-  typesGB = new QGroupBox("types", filteringBox);
-  typesCheckboxesLayout = new QVBoxLayout(typesGB);
-  int mockTypesCount = 10;
-  for (int i = 0; i < mockTypesCount; i++) {
-    QCheckBox *cb = new QCheckBox("checky boxy", typesGB);
-    typesCheckboxesLayout->addWidget(cb);
-  }
-  typesCheckboxesLayout->addStretch();
-  filteringBoxLayout->addWidget(typesGB);
-
-  namesGB = new QGroupBox("names", filteringBox);
-  namesCheckboxesLayout = new QVBoxLayout(namesGB);
-  int mockNamesCount = 30;
-  for (int i = 0; i < mockNamesCount; i++) {
-    QCheckBox *cb = new QCheckBox("name letter box", namesGB);
-    namesCheckboxesLayout->addWidget(cb);
-  }
-  namesCheckboxesLayout->addStretch();
-  filteringBoxLayout->addWidget(namesGB);
-
-  distancesGB = new QGroupBox("distances", filteringBox);
-  distancesCheckboxesLayout = new QVBoxLayout(distancesGB);
-  int distancesCount = 30;
-  for (int i = 0; i < distancesCount; i++) {
-    QCheckBox *cb = new QCheckBox("distance box", distancesGB);
-    distancesCheckboxesLayout->addWidget(cb);
-  }
-  distancesCheckboxesLayout->addStretch();
-  filteringBoxLayout->addWidget(distancesGB);
-
-  datesGB = new QGroupBox("dates", filteringBox);
-  datesCheckboxesLayout = new QVBoxLayout(datesGB);
-  int datesCount = 2;
-  for (int i = 0; i < datesCount; i++) {
-    QCheckBox *cb = new QCheckBox("dates box", datesGB);
-    datesCheckboxesLayout->addWidget(cb);
-  }
-  datesCheckboxesLayout->addStretch();
-  filteringBoxLayout->addWidget(datesGB);
-
-  leftLayout->addWidget(filteringBox);
 }
 
 void MyWindow::InitMainComponent() {
@@ -101,21 +60,63 @@ void MyWindow::InitMainComponent() {
   rightScrollArea->setWidgetResizable(true);
 
   windowLayout = new QHBoxLayout(this);
+  QPushButton *btnNextPage = new QPushButton("next page");
+  QPushButton *btnPrevPage = new QPushButton("prev page");
+  connect(btnPrevPage, &QPushButton::clicked, this, &MyWindow::DecrementPage);
+  connect(btnNextPage, &QPushButton::clicked, this, &MyWindow::IncrementPage);
+
   windowLayout->addWidget(leftScrollArea);
   windowLayout->addWidget(rightScrollArea);
+  windowLayout->addWidget(btnPrevPage);
+  windowLayout->addWidget(btnNextPage);
 
   this->setLayout(windowLayout);
   this->setWindowTitle("C++ OBJECTS GROUPING");
   this->resize(800, 600);
 }
 
-void MyWindow::InitItemsComponent() {
-  for (int i = 0; i < 20; ++i) {
-    QLabel *label = new QLabel(
-        QString("Name\nDistance\nType\nTime\n %1").arg(i), rightWidget);
+void MyWindow::InitItemsComponent(eGrouping grouping) {
+  int pageSize = 20;
+  if (!rightWidget) return;
+
+  // Получаем указатель на текущий layout
+  QLayout *layout = rightWidget->layout();
+
+  if (layout) {
+    // Проходим по всем виджетам в layout и удаляем их
+    QLayoutItem *item;
+    while ((item = layout->takeAt(0)) != nullptr) {
+      QWidget *childWidget = item->widget();
+      if (childWidget) {
+        childWidget->deleteLater();
+      }
+      QLayout *childLayout = item->layout();
+      if (childLayout) {
+        removeLayoutAndWidgets(childLayout->parentWidget());
+      }
+      delete item;
+    }
+  }
+
+  auto v = controller_->getObjects(grouping, pageSize, page);
+  for (auto it = v.begin(); it != v.end(); ++it) {
+    if (QString::fromStdString(it->groupName) != currentGroup) {
+      QLabel *l = new QLabel(QString::fromStdString(it->groupName));
+      currentGroup = QString::fromStdString(it->groupName);
+      rightLayout->addWidget(l);
+    }
+
+    QLabel *label = new QLabel(QString("%1\n%2\n%3\n%4\n%5")
+                                   .arg(QString::fromStdString(it->name))
+                                   .arg(it->xCoord)
+                                   .arg(it->yCoord)
+                                   .arg(QString::fromStdString(it->gType))
+                                   .arg(it->timeStamp),
+                               rightWidget);
 
     rightLayout->addWidget(label);
   }
+  currentGroup = "";
 }
 
 void MyWindow::StartPage() {
@@ -141,9 +142,69 @@ void MyWindow::openDirectoryDialog() {
     QMessageBox::information(this, "Selected Directory",
                              "You selected: " + directory);
     controller_->parseObjects(directory.toStdString());
+    removeLayoutAndWidgets(this);
+    InitMainComponent();
+    InitGroupingComponent();
+    // InitItemsComponent();
   }
 }
 
 void MyWindow::SetController(std::unique_ptr<Controller> controller) {
   controller_ = std::move(controller);
+}
+
+void MyWindow::removeLayoutAndWidgets(QWidget *widget) {
+  if (!widget) return;
+
+  // Получаем указатель на текущий layout
+  QLayout *layout = widget->layout();
+
+  if (layout) {
+    // Проходим по всем виджетам в layout и удаляем их
+    QLayoutItem *item;
+    while ((item = layout->takeAt(0)) != nullptr) {
+      QWidget *childWidget = item->widget();
+      if (childWidget) {
+        childWidget->deleteLater();
+      }
+      QLayout *childLayout = item->layout();
+      if (childLayout) {
+        removeLayoutAndWidgets(childLayout->parentWidget());
+      }
+      delete item;
+    }
+    delete layout;
+  }
+}
+
+void MyWindow::onComboBoxIndexChanged(int index) {
+  QString selectedText = groupByComboBox->currentText();
+
+  switch (index) {
+    case 0:
+    case 1:
+      InitItemsComponent(eGrouping::Type);
+      break;
+    case 2:
+      InitItemsComponent(eGrouping::Name);
+      break;
+    case 3:
+      InitItemsComponent(eGrouping::Date);
+      break;
+    case 4:
+      InitItemsComponent(eGrouping::Distance);
+      break;
+  }
+}
+
+void MyWindow::IncrementPage() {
+  page++;
+  onComboBoxIndexChanged(groupByComboBox->currentIndex());
+}
+void MyWindow::DecrementPage() {
+  if (page == 1) {
+    return;
+  }
+  page--;
+  onComboBoxIndexChanged(groupByComboBox->currentIndex());
 }

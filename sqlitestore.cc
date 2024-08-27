@@ -60,3 +60,48 @@ void SqliteStore::InsertData(const std::vector<Object> &v) {
     }
   }
 }
+
+std::vector<ViewObject> SqliteStore::getObjects(eGrouping grouping,
+                                                int pageSize, int pageNumber) {
+  std::vector<ViewObject> objects;
+
+  QSqlQuery query;
+  switch (grouping) {
+    case eGrouping::Type:
+      query.prepare(groupByTypeSizeQuery);
+      query.bindValue(":group_size", 4);
+      break;
+    case eGrouping::Date:
+      query.prepare(groupByDate);
+      break;
+    case eGrouping::Distance:
+      query.prepare(groupByDistance);
+      break;
+    case eGrouping::Name:
+      query.prepare(groupByName);
+      break;
+  }
+
+  query.bindValue(":page_size", pageSize);
+  query.bindValue(":offset", (pageNumber - 1) * pageSize);
+  if (query.exec()) {
+    while (query.next()) {
+      ViewObject obj;
+
+      obj.name = query.value(0).toString().toStdString();
+      obj.xCoord = query.value(1).toDouble();
+      obj.yCoord = query.value(2).toDouble();
+      obj.gType = query.value(3).toString().toStdString();
+      obj.timeStamp = query.value(4).toDouble();
+      obj.groupName = query.value(5).toString().toStdString();
+
+      objects.push_back(obj);
+    }
+  } else {
+    std::cerr << "Ошибка выполнения запроса select: "
+              << query.lastError().text().toStdString() << std::endl;
+    qDebug() << "Последний запрос:" << query.lastQuery();
+  }
+
+  return objects;
+}

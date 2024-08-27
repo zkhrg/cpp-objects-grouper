@@ -24,10 +24,12 @@ class MyWindow : public QWidget {
   void InitComponents();
   void InitMainComponent();
   void InitGroupingComponent();
-  void InitFilteringComponent();
-  void InitItemsComponent();
+  void InitItemsComponent(eGrouping grouping);
   void SetController(std::unique_ptr<Controller> controller);
-
+  void removeLayoutAndWidgets(QWidget *widget);
+  void onComboBoxIndexChanged(int index);
+  void DecrementPage();
+  void IncrementPage();
  signals:
  private:
   void openDirectoryDialog();
@@ -54,6 +56,8 @@ class MyWindow : public QWidget {
 
   // controller
   std::unique_ptr<Controller> controller_;
+  QString currentGroup;
+  int page;
 };
 
 #endif  // MYWINDOW_H
