@@ -17,7 +17,7 @@ class SqliteStore : public Store {
  public:
   SqliteStore();
   bool InitStore(std::string &dbPath) override;
-  // void InsertData() override;
+  void InsertData(const std::vector<Object> &v) override;
 };
 
 #endif  // SQLITESTORE_H

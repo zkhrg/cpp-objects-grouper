@@ -5,14 +5,15 @@
 #include <iostream>
 #include <sstream>
 #include <string>
+#include <vector>
 
-class ObjectsParser {
+#include "parser.h"
+#include "types.h"
+
+class ObjectsParser : public Parser {
  public:
   ObjectsParser();
-  void Parse();
-
- private:
-  std::string filePath;
+  std::vector<Object> Parse(std::string filePath) override;
 };
 
 #endif  // OBJECTSPARSER_H

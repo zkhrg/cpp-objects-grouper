@@ -2,31 +2,27 @@
 
 ObjectsParser::ObjectsParser() {}
 
-void ObjectsParser::Parse() {
+std::vector<Object> ObjectsParser::Parse(std::string filePath) {
+  std::vector<Object> v;
   std::ifstream file(filePath);
 
   if (!file.is_open()) {
     std::cerr << "Ошибка открытия файла!" << std::endl;
-    return;
+    return v;
   }
 
   std::string line;
   while (std::getline(file, line)) {
     std::istringstream iss(line);
-    std::string str1, str2;
-    double num1, num2, num3;
+    Object o;
 
-    if (!(iss >> str1 >> num1 >> num2 >> str2 >> num3)) {
+    if (!(iss >> o.name >> o.xCoord >> o.yCoord >> o.gType >> o.timeStamp)) {
       std::cerr << "Ошибка чтения данных!" << std::endl;
       continue;
     }
-
-    std::cout << "Строка 1: " << str1 << std::endl;
-    std::cout << "Число 1: " << num1 << std::endl;
-    std::cout << "Число 2: " << num2 << std::endl;
-    std::cout << "Строка 2: " << str2 << std::endl;
-    std::cout << "Число 3: " << num3 << std::endl;
+    v.push_back(o);
   }
 
   file.close();
+  return v;
 }

@@ -8,6 +8,7 @@ class Store {
   virtual ~Store() = default;
 
   virtual bool InitStore(std::string &dbPath) = 0;
+  virtual void InsertData(const std::vector<Object> &v) = 0;
   // virtual void InsertObject(Object obj) = 0;
   // virtual vvv GetTypesGroups() = 0;
   // virtual vvv GetDatesGroups() = 0;

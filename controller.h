@@ -1,16 +1,18 @@
 #ifndef CONTROLLER_H
 #define CONTROLLER_H
 
-#include "memory.h"
-#include "store.h"
+#include <memory>
+#include <string>
 
+#include "model.h"
 class Controller {
  public:
   Controller();
-  void SetStore(std::unique_ptr<Store> s);
+  void setModel(std::unique_ptr<Model> m);
+  void parseObjects(std::string s);
 
  private:
-  std::unique_ptr<Store> store;
+  std::unique_ptr<Model> model_;
 };
 
 #endif  // CONTROLLER_H

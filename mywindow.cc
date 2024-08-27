@@ -134,12 +134,16 @@ void MyWindow::StartPage() {
 
 void MyWindow::openDirectoryDialog() {
   // Open a directory selection dialog
-  QString directory =
-      QFileDialog::getExistingDirectory(this, "Select Directory");
+  QString directory = QFileDialog::getOpenFileName(this, "Select Directory");
 
   // Show the selected directory (for demonstration purposes)
   if (!directory.isEmpty()) {
     QMessageBox::information(this, "Selected Directory",
                              "You selected: " + directory);
+    controller_->parseObjects(directory.toStdString());
   }
+}
+
+void MyWindow::SetController(std::unique_ptr<Controller> controller) {
+  controller_ = std::move(controller);
 }

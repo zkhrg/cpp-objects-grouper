@@ -14,6 +14,8 @@
 #include <QVBoxLayout>
 #include <QWidget>
 
+#include "controller.h"
+
 class MyWindow : public QWidget {
   Q_OBJECT
  public:
@@ -24,6 +26,7 @@ class MyWindow : public QWidget {
   void InitGroupingComponent();
   void InitFilteringComponent();
   void InitItemsComponent();
+  void SetController(std::unique_ptr<Controller> controller);
 
  signals:
  private:
@@ -48,6 +51,9 @@ class MyWindow : public QWidget {
   QVBoxLayout *filteringBoxLayout, *typesCheckboxesLayout,
       *namesCheckboxesLayout, *distancesCheckboxesLayout,
       *datesCheckboxesLayout;
+
+  // controller
+  std::unique_ptr<Controller> controller_;
 };
 
 #endif  // MYWINDOW_H
