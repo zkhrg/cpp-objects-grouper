@@ -3,7 +3,7 @@
 
 #include <vector>
 
-#include "types.h"
+#include "../model/types.h"
 
 class Store {
  public:
@@ -13,12 +13,6 @@ class Store {
   virtual void InsertData(const std::vector<Object> &v) = 0;
   virtual std::vector<ViewObject> getObjects(eGrouping grouping, int pageSize,
                                              int pageNumber) = 0;
-
-  // virtual void InsertObject(Object obj) = 0;
-  // virtual vvv GetTypesGroups() = 0;
-  // virtual vvv GetDatesGroups() = 0;
-  // virtual vvv GetDistancesGroups() = 0;
-  // virutal vvv Get
 };
 
 #endif  // STORE_H

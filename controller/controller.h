@@ -4,7 +4,7 @@
 #include <memory>
 #include <string>
 
-#include "model.h"
+#include "../model/model.h"
 class Controller {
  public:
   Controller();

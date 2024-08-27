@@ -7,8 +7,8 @@
 #include <string>
 #include <vector>
 
+#include "../model/types.h"
 #include "parser.h"
-#include "types.h"
 
 class ObjectsParser : public Parser {
  public:

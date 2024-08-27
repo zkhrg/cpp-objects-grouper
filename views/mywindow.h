@@ -14,7 +14,7 @@
 #include <QVBoxLayout>
 #include <QWidget>
 
-#include "controller.h"
+#include "../controller/controller.h"
 
 class MyWindow : public QWidget {
   Q_OBJECT
@@ -27,9 +27,11 @@ class MyWindow : public QWidget {
   void InitItemsComponent(eGrouping grouping);
   void SetController(std::unique_ptr<Controller> controller);
   void removeLayoutAndWidgets(QWidget *widget);
-  void onComboBoxIndexChanged(int index);
+  void onComboBoxIndexChanged();
   void DecrementPage();
   void IncrementPage();
+  void renderObjects();
+  void saveToFile();
  signals:
  private:
   void openDirectoryDialog();
@@ -58,6 +60,7 @@ class MyWindow : public QWidget {
   std::unique_ptr<Controller> controller_;
   QString currentGroup;
   int page;
+  QString pageContent;
 };
 
 #endif  // MYWINDOW_H

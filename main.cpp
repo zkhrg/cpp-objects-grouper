@@ -21,15 +21,6 @@ int main(int argc, char *argv[]) {
 
   std::string dbPath = qdbPath.toStdString();
   store->InitStore(dbPath);
-
-  std::vector<Object> v;
-  v.push_back({.name = "фыва",
-               .xCoord = 13.13,
-               .yCoord = 1313.222,
-               .gType = "asddd",
-               .timeStamp = 99.3});
-
-  store->InsertData(v);
   model->SetStore(std::move(store));
   model->SetParser(std::move(parser));
 

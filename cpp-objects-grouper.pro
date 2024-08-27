@@ -9,22 +9,22 @@ CONFIG += c++17
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
-    controller.cc \
+    ./controller/controller.cc \
     main.cpp \
-    model.cc \
-    mywindow.cc \
-    objectsparser.cc \
-    sqlitestore.cc
+    ./model/model.cc \
+    ./views/mywindow.cc \
+    ./parser/objectsparser.cc \
+    ./store/sqlitestore.cc
 
 HEADERS += \
-    controller.h \
-    model.h \
-    mywindow.h \
-    objectsparser.h \
-    parser.h \
-    sqlitestore.h \
-    store.h \
-    types.h
+    ./controller/controller.h \
+    ./model/model.h \
+    ./views/mywindow.h \
+    ./parser/objectsparser.h \
+    ./parser/parser.h \
+    ./store/sqlitestore.h \
+    ./store/store.h \
+    ./model/types.h
 
 FORMS +=
 

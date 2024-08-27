@@ -3,8 +3,8 @@
 
 #include <memory>
 
-#include "parser.h"
-#include "store.h"
+#include "../parser/parser.h"
+#include "../store/store.h"
 
 class Model {
  public:
@@ -14,6 +14,7 @@ class Model {
   void Parse(std::string s);
   std::vector<ViewObject> getObjects(eGrouping grouping, int pageSize,
                                      int pageNumber);
+  void setGroupTypeSize(int size);
 
  private:
   std::unique_ptr<Store> store_;

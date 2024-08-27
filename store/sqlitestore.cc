@@ -22,19 +22,29 @@ bool SqliteStore::InitStore(std::string &dbPath) {
   QSqlQuery query;
 
   // Создание таблицы 'objects'
-  QString createTableQuery =
-      "CREATE TABLE IF NOT EXISTS objects ("
-      "id INTEGER PRIMARY KEY AUTOINCREMENT, "
-      "name TEXT NOT NULL, "
-      "x REAL NOT NULL, "
-      "y REAL NOT NULL, "
-      "group_type TEXT NOT NULL, "
-      "time REAL NOT NULL)";
+  QString createTableQuery = R"(
+      DROP TABLE IF EXISTS objects;
+  )";
+  if (!query.exec(createTableQuery)) {
+    qDebug() << "Ошибка удаления таблицы:" << query.lastError().text();
+    return false;
+  }
+
+  createTableQuery = R"(
+      CREATE TABLE IF NOT EXISTS objects (
+      id INTEGER PRIMARY KEY AUTOINCREMENT, 
+      name TEXT NOT NULL, 
+      x REAL NOT NULL, 
+      y REAL NOT NULL, 
+      group_type TEXT NOT NULL, 
+      time REAL NOT NULL);
+    )";
+
   if (!query.exec(createTableQuery)) {
     qDebug() << "Ошибка создания таблицы:" << query.lastError().text();
     return false;
   }
-
+  // TODO: можно бы и транзакции сделать
   return true;
 }
 

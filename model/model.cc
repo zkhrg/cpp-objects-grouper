@@ -15,3 +15,5 @@ std::vector<ViewObject> Model::getObjects(eGrouping grouping, int pageSize,
                                           int pageNumber) {
   return store_->getObjects(grouping, pageSize, pageNumber);
 }
+
+void setGroupTypeSize(int size) {}

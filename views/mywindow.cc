@@ -6,16 +6,8 @@ MyWindow::MyWindow(QWidget *parent) : QWidget(parent) {
   page = 1;
 }
 
-// группы
-// если больше 2 в группе то выделяем отдельную группу, если нет то суем в
-// разное
-
 void MyWindow::InitComponents() {
   StartPage();
-  // InitMainComponent();
-  // InitGroupingComponent();
-  // InitFilteringComponent();
-  // InitItemsComponent();
 }
 
 void MyWindow::InitGroupingComponent() {
@@ -62,28 +54,33 @@ void MyWindow::InitMainComponent() {
   windowLayout = new QHBoxLayout(this);
   QPushButton *btnNextPage = new QPushButton("next page");
   QPushButton *btnPrevPage = new QPushButton("prev page");
+  QPushButton *btnSavePage = new QPushButton("save page");
+  QPushButton *btnChangePage = new QPushButton("change source file");
+  connect(btnChangePage, &QPushButton::clicked, this,
+          &MyWindow::openDirectoryDialog);
   connect(btnPrevPage, &QPushButton::clicked, this, &MyWindow::DecrementPage);
   connect(btnNextPage, &QPushButton::clicked, this, &MyWindow::IncrementPage);
+  connect(btnSavePage, &QPushButton::clicked, this, &MyWindow::saveToFile);
 
+  leftLayout->addWidget(btnChangePage);
   windowLayout->addWidget(leftScrollArea);
   windowLayout->addWidget(rightScrollArea);
   windowLayout->addWidget(btnPrevPage);
   windowLayout->addWidget(btnNextPage);
+  windowLayout->addWidget(btnSavePage);
 
   this->setLayout(windowLayout);
   this->setWindowTitle("C++ OBJECTS GROUPING");
-  this->resize(800, 600);
+  this->resize(1000, 600);
 }
 
 void MyWindow::InitItemsComponent(eGrouping grouping) {
   int pageSize = 20;
   if (!rightWidget) return;
 
-  // Получаем указатель на текущий layout
   QLayout *layout = rightWidget->layout();
 
   if (layout) {
-    // Проходим по всем виджетам в layout и удаляем их
     QLayoutItem *item;
     while ((item = layout->takeAt(0)) != nullptr) {
       QWidget *childWidget = item->widget();
@@ -97,22 +94,25 @@ void MyWindow::InitItemsComponent(eGrouping grouping) {
       delete item;
     }
   }
-
+  pageContent = "";
   auto v = controller_->getObjects(grouping, pageSize, page);
   for (auto it = v.begin(); it != v.end(); ++it) {
     if (QString::fromStdString(it->groupName) != currentGroup) {
-      QLabel *l = new QLabel(QString::fromStdString(it->groupName));
+      QString group = QString::fromStdString(it->groupName);
+      pageContent += group + "\n\n\n";
+      QLabel *l = new QLabel(group);
       currentGroup = QString::fromStdString(it->groupName);
+      l->setStyleSheet("font-size: 24px; font-weight: bold;");
       rightLayout->addWidget(l);
     }
-
-    QLabel *label = new QLabel(QString("%1\n%2\n%3\n%4\n%5")
-                                   .arg(QString::fromStdString(it->name))
-                                   .arg(it->xCoord)
-                                   .arg(it->yCoord)
-                                   .arg(QString::fromStdString(it->gType))
-                                   .arg(it->timeStamp),
-                               rightWidget);
+    QString obj = QString("name: %1\nx: %2\ny: %3\ntype: %4\nunix_time: %5\n\n")
+                      .arg(QString::fromStdString(it->name))
+                      .arg(it->xCoord)
+                      .arg(it->yCoord)
+                      .arg(QString::fromStdString(it->gType))
+                      .arg(it->timeStamp);
+    pageContent += obj;
+    QLabel *label = new QLabel(obj, rightWidget);
 
     rightLayout->addWidget(label);
   }
@@ -145,7 +145,6 @@ void MyWindow::openDirectoryDialog() {
     removeLayoutAndWidgets(this);
     InitMainComponent();
     InitGroupingComponent();
-    // InitItemsComponent();
   }
 }
 
@@ -156,11 +155,9 @@ void MyWindow::SetController(std::unique_ptr<Controller> controller) {
 void MyWindow::removeLayoutAndWidgets(QWidget *widget) {
   if (!widget) return;
 
-  // Получаем указатель на текущий layout
   QLayout *layout = widget->layout();
 
   if (layout) {
-    // Проходим по всем виджетам в layout и удаляем их
     QLayoutItem *item;
     while ((item = layout->takeAt(0)) != nullptr) {
       QWidget *childWidget = item->widget();
@@ -177,10 +174,25 @@ void MyWindow::removeLayoutAndWidgets(QWidget *widget) {
   }
 }
 
-void MyWindow::onComboBoxIndexChanged(int index) {
-  QString selectedText = groupByComboBox->currentText();
+void MyWindow::onComboBoxIndexChanged() {
+  page = 1;
+  renderObjects();
+}
 
-  switch (index) {
+void MyWindow::IncrementPage() {
+  page++;
+  renderObjects();
+}
+void MyWindow::DecrementPage() {
+  if (page == 1) {
+    return;
+  }
+  page--;
+  renderObjects();
+}
+
+void MyWindow::renderObjects() {
+  switch (groupByComboBox->currentIndex()) {
     case 0:
     case 1:
       InitItemsComponent(eGrouping::Type);
@@ -197,14 +209,27 @@ void MyWindow::onComboBoxIndexChanged(int index) {
   }
 }
 
-void MyWindow::IncrementPage() {
-  page++;
-  onComboBoxIndexChanged(groupByComboBox->currentIndex());
-}
-void MyWindow::DecrementPage() {
-  if (page == 1) {
+void MyWindow::saveToFile() {
+  QString data = pageContent;
+  QString directory = QFileDialog::getExistingDirectory(
+      nullptr, "Выберите папку для сохранения");
+
+  if (directory.isEmpty()) {
+    qDebug() << "Папка не выбрана.";
     return;
   }
-  page--;
-  onComboBoxIndexChanged(groupByComboBox->currentIndex());
+  QString filePath = directory + "/output.txt";
+
+  QFile file(filePath);
+  if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+    qDebug() << "Не удалось открыть файл для записи:" << file.errorString();
+    return;
+  }
+
+  QTextStream out(&file);
+  out << data;
+
+  file.close();
+
+  qDebug() << "Данные успешно сохранены в" << filePath;
 }

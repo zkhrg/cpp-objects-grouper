@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 
-#include "types.h"
+#include "../model/types.h"
 
 class Parser {
  public:
