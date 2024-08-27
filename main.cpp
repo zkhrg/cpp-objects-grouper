@@ -1,11 +1,11 @@
 #include <QApplication>
 #include <QWidget>
 
-#include "controller.h"
-#include "model.h"
-#include "mywindow.h"
-#include "objectsparser.h"
-#include "sqlitestore.h"
+#include "./controller/controller.h"
+#include "./model/model.h"
+#include "./parser/objectsparser.h"
+#include "./store/sqlitestore.h"
+#include "./views/mywindow.h"
 
 int main(int argc, char *argv[]) {
   QApplication app(argc, argv);
